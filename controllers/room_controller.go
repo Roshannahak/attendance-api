@@ -64,3 +64,23 @@ func GetAllRooms(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"success": true, "msg": "rooms count : " + strconv.Itoa(len(rooms)), "data": rooms})
 }
+
+func DeleteRoom(c *gin.Context) {
+	roomId := c.Param("roomId")
+
+	objId, _ := primitive.ObjectIDFromHex(roomId)
+
+	result, err := RoomCollection.DeleteOne(context.TODO(), bson.M{"_id": objId})
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})
+		return
+	}
+
+	if result.DeletedCount == 1 {
+		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "room successfully deleted.."})
+		return
+	}
+
+	c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "room not found.."})
+}

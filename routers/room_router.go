@@ -9,4 +9,5 @@ import (
 func RoomRouters(route *gin.RouterGroup){
 	route.GET("/rooms", controllers.GetAllRooms)
 	route.POST("/room", controllers.CreateRoom)
+	route.DELETE("/room/:roomId", controllers.DeleteRoom)
 }
