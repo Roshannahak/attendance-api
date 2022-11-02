@@ -7,7 +7,7 @@ import (
 )
 
 func LogRouters(route *gin.RouterGroup) {
-	route.POST("/checkin", controllers.CheckedIn)
+	route.POST("/entry", controllers.Entry)
 	route.GET("/checkin", controllers.GetCheckedInList)
 	route.GET("/logs", controllers.GetAllLogs)
 }

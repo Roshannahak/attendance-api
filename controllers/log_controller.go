@@ -16,7 +16,7 @@ import (
 var logCollection = config.GetCollection("logs")
 var checkInCollection = config.GetCollection("checkin")
 
-func CheckedIn(c *gin.Context) {
+func Entry(c *gin.Context) {
 	var userLog models.Logs
 
 	if err := c.BindJSON(&userLog); err != nil {
@@ -40,38 +40,43 @@ func CheckedIn(c *gin.Context) {
 		checkedInUser.Decode(&getLog)
 		if getLog.Id.IsZero() {
 
-			// println(getLog.Id.String())
-
-			// //check time out
-			// if isTimeOut(getLog.InTime){
-			// 	checkInCollection.DeleteOne(context.TODO(), bson.M{"_id": getLog.Id})
-			// }
-
-			newlog := models.Logs{
-				Id:     primitive.NewObjectID(),
-				UserId: userLog.UserId,
-				RoomId: userLog.RoomId,
-				InTime: time.Now().Format(time.RFC3339),
-			}
-
-			//insert data in logs
-			if result, _ := logCollection.InsertOne(context.TODO(), newlog); result.InsertedID != nil {
-				//insert data in checkin list
-				_, err := checkInCollection.InsertOne(context.TODO(), newlog)
-				if err != nil {
-					c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})
-					return
-				}
-				c.JSON(http.StatusOK, gin.H{"success": true, "msg": "welcome you have successfully checkedIn"})
-				return
-			}
+			checkedIn(c, userLog)
 
 		} else {
-			//if log available in checked in list
-			checkedOut(c, getLog.Id)
+			println(getLog.Id.String())
+
+			//check time out
+			if isTimeOut(getLog.InTime) {
+				checkInCollection.DeleteOne(context.TODO(), bson.M{"_id": getLog.Id})
+				checkedIn(c, userLog)
+			} else {
+				//if log available in checked in list
+				checkedOut(c, getLog.Id)
+			}
 		}
 	} else {
 		c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "invalid room id"})
+		return
+	}
+}
+
+func checkedIn(c *gin.Context, userLog models.Logs) {
+	newlog := models.Logs{
+		Id:     primitive.NewObjectID(),
+		UserId: userLog.UserId,
+		RoomId: userLog.RoomId,
+		InTime: time.Now().Format(time.RFC3339),
+	}
+
+	//insert data in logs
+	if result, _ := logCollection.InsertOne(context.TODO(), newlog); result.InsertedID != nil {
+		//insert data in checkin list
+		_, err := checkInCollection.InsertOne(context.TODO(), newlog)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})
+			return
+		}
+		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "welcome you have successfully checkedIn"})
 		return
 	}
 }
@@ -81,11 +86,9 @@ func isTimeOut(inTimeStr string) bool {
 	currentTime := time.Now()
 	diff := currentTime.Sub(InTime)
 	timeDiff := int(diff.Hours())
-	if timeDiff > 12 {
-		println(true)
+	if timeDiff > 11 {
 		return true
 	}
-	println(false)
 	return false
 }
 
