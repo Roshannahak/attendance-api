@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func UserRouters(route *gin.Engine) {
+func UserRouters(route *gin.RouterGroup) {
 
 	route.POST("/user", controllers.CreateUser)
 	route.DELETE("/user/:userId", controllers.RemoveUser)

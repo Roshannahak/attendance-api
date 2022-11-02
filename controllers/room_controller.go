@@ -13,7 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var roomCollection = config.GetCollection("Rooms")
+var RoomCollection = config.GetCollection("Rooms")
 
 func CreateRoom(c *gin.Context) {
 	var room models.Room
@@ -22,16 +22,16 @@ func CreateRoom(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "msg": err})
 		return
 	}
-
+	roomid := "RM" + room.RoomNo
 	newRoom := models.Room{
 		Id:             primitive.NewObjectID(),
 		RoomNo:         room.RoomNo,
-		RoomId:         room.RoomId,
+		RoomId:         roomid,
 		DepartmentName: room.DepartmentName,
-		CreatedAt:      time.Now().Local(),
+		Created:        time.Now().Format("2006-01-02"),
 	}
 
-	_, err := roomCollection.InsertOne(context.TODO(), newRoom)
+	_, err := RoomCollection.InsertOne(context.TODO(), newRoom)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})
@@ -44,7 +44,7 @@ func CreateRoom(c *gin.Context) {
 func GetAllRooms(c *gin.Context) {
 	var rooms []models.Room
 
-	result, err := roomCollection.Find(context.TODO(), bson.M{})
+	result, err := RoomCollection.Find(context.TODO(), bson.M{})
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})

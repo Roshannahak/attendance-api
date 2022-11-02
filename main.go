@@ -7,14 +7,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func main(){
+func main() {
 	router := gin.Default()
 
 	config.ConnectDB()
 
-	routers.UserRouters(router)
+	api := router.Group("/api")
+	{
+		routers.UserRouters(api)
 
-	routers.RoomRouters(router)
+		routers.RoomRouters(api)
+
+		routers.LogRouters(api)
+	}
 
 	router.Run("localhost:5252")
 }

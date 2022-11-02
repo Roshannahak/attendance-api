@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func RoomRouters(route *gin.Engine){
+func RoomRouters(route *gin.RouterGroup){
 	route.GET("/rooms", controllers.GetAllRooms)
 	route.POST("/room", controllers.CreateRoom)
 }
