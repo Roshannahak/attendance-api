@@ -24,9 +24,8 @@ func CreateUser(c *gin.Context) {
 
 	newUser := models.User{
 		Id:        primitive.NewObjectID(),
-		FirstName: user.FirstName,
-		LastName:  user.LastName,
-		College:   user.College,
+		FullName:  user.FullName,
+		RollNo:    user.RollNo,
 		Branch:    user.Branch,
 		Course:    user.Course,
 		Semester:  user.Semester,

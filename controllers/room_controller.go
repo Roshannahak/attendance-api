@@ -22,11 +22,9 @@ func CreateRoom(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "msg": err})
 		return
 	}
-	roomid := "RM" + room.RoomNo
 	newRoom := models.Room{
 		Id:             primitive.NewObjectID(),
 		RoomNo:         room.RoomNo,
-		RoomId:         roomid,
 		DepartmentName: room.DepartmentName,
 		Created:        time.Now().Format("2006-01-02"),
 	}
