@@ -84,3 +84,33 @@ func DeleteRoom(c *gin.Context) {
 
 	c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "room not found.."})
 }
+
+func UpdateRoom(c *gin.Context) {
+	roomId := c.Param("roomId")
+
+	objId, _ := primitive.ObjectIDFromHex(roomId)
+
+	var room models.Room
+
+	if err := c.BindJSON(&room); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})
+		return
+	}
+
+	updated := bson.M{"roomno": room.RoomNo, "departmentname": room.DepartmentName}
+
+	updateResult, err := RoomCollection.UpdateOne(context.TODO(), bson.M{"_id": objId}, bson.M{"$set": updated})
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})
+		return
+	}
+
+	if updateResult.ModifiedCount == 1{
+		RoomCollection.FindOne(context.TODO(), bson.M{"_id": objId}).Decode(&room)
+		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "successfully updated..", "data": room})
+		return
+	}
+
+	c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "user not found.."})
+}
