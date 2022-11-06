@@ -7,8 +7,6 @@ import (
 )
 
 func UserRouters(route *gin.RouterGroup) {
-
-	route.POST("/user", controllers.CreateUser)
 	route.DELETE("/user/:userId", controllers.RemoveUser)
 	route.GET("/users", controllers.GetAllUser)
 }

@@ -14,6 +14,10 @@ func main() {
 
 	api := router.Group("/api")
 	{
+		auth := api.Group("/auth")
+		{
+			routers.AuthRouters(auth)
+		}
 		routers.UserRouters(api)
 
 		routers.RoomRouters(api)

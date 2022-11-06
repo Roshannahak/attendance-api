@@ -14,39 +14,6 @@ import (
 
 var userCollection = config.GetCollection("users")
 
-func CreateUser(c *gin.Context) {
-	var user models.User
-
-	if err := c.BindJSON(&user); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"success": false, "data": err})
-		return
-	}
-
-	newUser := models.User{
-		Id:        primitive.NewObjectID(),
-		FullName:  user.FullName,
-		RollNo:    user.RollNo,
-		Branch:    user.Branch,
-		Course:    user.Course,
-		Semester:  user.Semester,
-		ContactNo: user.ContactNo,
-	}
-
-	result, err := userCollection.InsertOne(context.TODO(), newUser)
-
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": "internal server error", "data": err})
-		return
-	}
-
-	if result.InsertedID != nil {
-		c.JSON(http.StatusCreated, gin.H{"success": true, "msg": "successfully inserted..", "data": newUser})
-		return
-	}
-
-	c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "user not found.."})
-}
-
 func GetAllUser(c *gin.Context) {
 	var users []models.User
 
