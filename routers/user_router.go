@@ -9,4 +9,5 @@ import (
 func UserRouters(route *gin.RouterGroup) {
 	route.DELETE("/user/:userId", controllers.RemoveUser)
 	route.GET("/users", controllers.GetAllUser)
+	route.GET("/users/:quary", controllers.SearchUser)
 }

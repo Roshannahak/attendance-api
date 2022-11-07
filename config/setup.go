@@ -30,3 +30,4 @@ func GetCollection(collectionName string) *mongo.Collection {
 
 	return collection;
 }
+
