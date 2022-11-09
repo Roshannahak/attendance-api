@@ -5,7 +5,7 @@ import (
 )
 
 type Room struct {
-	Id             primitive.ObjectID `json:"id" bson:"_id"`
+	Id             primitive.ObjectID `json:"_id" bson:"_id"`
 	RoomNo         string             `json:"roomno"`
 	DepartmentName string             `json:"departmentname"`
 	Created        string             `json:"created"`

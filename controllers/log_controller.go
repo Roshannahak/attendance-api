@@ -17,41 +17,48 @@ var logCollection = config.GetCollection("logs")
 var checkInCollection = config.GetCollection("checkin")
 
 func Entry(c *gin.Context) {
-	var userLog models.Logs
+	var entryRequest models.EntryLogsRequest
 
-	if err := c.BindJSON(&userLog); err != nil {
+	if err := c.BindJSON(&entryRequest); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "msg": err})
 		return
 	}
 
-	roomId, err := primitive.ObjectIDFromHex(userLog.RoomId)
+	//find room object
+	roomId, err := primitive.ObjectIDFromHex(entryRequest.RoomId)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "invalid room id"})
 		return
 	}
-
-	//validate room id
 	var room models.Room
 	RoomCollection.FindOne(context.TODO(), bson.M{"_id": roomId}).Decode(&room)
+
+	//find user object
+	userId, err := primitive.ObjectIDFromHex(entryRequest.UserId)
+	if err != nil {
+		c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "invalid user id"})
+		return
+	}
+	var user models.User
+	userCollection.FindOne(context.TODO(), bson.M{"_id": userId}).Decode(&user)
+
 	if room.Id == roomId {
 		//check log available in checked in list
-		checkedInUser := checkInCollection.FindOne(context.TODO(), bson.M{"userid": userLog.UserId, "roomid": userLog.RoomId})
-		var getLog models.Logs
-		checkedInUser.Decode(&getLog)
-		if getLog.Id.IsZero() {
+		checkedInUser := checkInCollection.FindOne(context.TODO(), bson.M{"user._id": userId, "room._id": roomId})
+		var entryResponse models.EntryLogsResponse
+		checkedInUser.Decode(&entryResponse)
+		if entryResponse.Id.IsZero() {
 
-			checkedIn(c, userLog)
+			checkedIn(c, room, user)
 
 		} else {
-			println(getLog.Id.String())
-
 			//check time out
-			if isTimeOut(getLog.InTime) {
-				checkInCollection.DeleteOne(context.TODO(), bson.M{"_id": getLog.Id})
-				checkedIn(c, userLog)
+			if isTimeOut(entryResponse.InTime) {
+				checkInCollection.DeleteOne(context.TODO(), bson.M{"_id": entryResponse.Id})
+				checkedIn(c, room, user)
 			} else {
 				//if log available in checked in list
-				checkedOut(c, getLog.Id)
+				checkedOut(c, entryResponse.Id)
 			}
 		}
 	} else {
@@ -60,11 +67,11 @@ func Entry(c *gin.Context) {
 	}
 }
 
-func checkedIn(c *gin.Context, userLog models.Logs) {
-	newlog := models.Logs{
+func checkedIn(c *gin.Context, room models.Room, user models.User) {
+	newlog := models.EntryLogsResponse{
 		Id:     primitive.NewObjectID(),
-		UserId: userLog.UserId,
-		RoomId: userLog.RoomId,
+		User:   user,
+		Room:   room,
 		InTime: time.Now().Format(time.RFC3339),
 	}
 
@@ -116,7 +123,7 @@ func checkedOut(c *gin.Context, logId primitive.ObjectID) {
 }
 
 func GetAllLogs(c *gin.Context) {
-	var logs []models.Logs
+	var logs []models.EntryLogsResponse
 
 	result, err := logCollection.Find(context.TODO(), bson.M{})
 
@@ -126,7 +133,7 @@ func GetAllLogs(c *gin.Context) {
 	}
 
 	for result.Next(context.TODO()) {
-		var singleLog models.Logs
+		var singleLog models.EntryLogsResponse
 
 		result.Decode(&singleLog)
 		logs = append(logs, singleLog)
@@ -136,7 +143,7 @@ func GetAllLogs(c *gin.Context) {
 }
 
 func GetCheckedInList(c *gin.Context) {
-	var logs []models.Logs
+	var logs []models.EntryLogsResponse
 
 	result, err := checkInCollection.Find(context.TODO(), bson.M{})
 
@@ -146,7 +153,7 @@ func GetCheckedInList(c *gin.Context) {
 	}
 
 	for result.Next(context.TODO()) {
-		var singleLog models.Logs
+		var singleLog models.EntryLogsResponse
 
 		result.Decode(&singleLog)
 		logs = append(logs, singleLog)
