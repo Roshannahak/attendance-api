@@ -10,4 +10,5 @@ func LogRouters(route *gin.RouterGroup) {
 	route.POST("/entry", controllers.Entry)
 	route.GET("/checkin", controllers.GetCheckedInList)
 	route.GET("/logs", controllers.GetAllLogs)
+	route.GET("/logs/:userId", controllers.GetLogsByUserId)
 }

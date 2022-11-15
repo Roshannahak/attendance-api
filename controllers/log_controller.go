@@ -173,3 +173,32 @@ func GetCheckedInList(c *gin.Context) {
 		return
 	}
 }
+
+func GetLogsByUserId(c *gin.Context) {
+	userId := c.Param("userId")
+
+	var logs []models.EntryLogsResponse
+
+	id, _ := primitive.ObjectIDFromHex(userId)
+
+	opts := options.Find().SetProjection(bson.M{"user.contactno": 0, "user.rollno": 0, "room.created": 0})
+	result, err := logCollection.Find(context.TODO(), bson.M{"user._id": id}, opts)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})
+		return
+	}
+
+	for result.Next(context.TODO()) {
+		var singleLog models.EntryLogsResponse
+		result.Decode(&singleLog)
+		logs = append(logs, singleLog)
+	}
+
+	if logs != nil {
+		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "total count : ", "data": logs})
+		return
+	}
+
+	c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "not found"})
+}
