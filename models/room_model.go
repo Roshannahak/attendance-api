@@ -6,7 +6,7 @@ import (
 
 type Room struct {
 	Id             primitive.ObjectID `json:"_id" bson:"_id"`
-	RoomNo         string             `json:"roomno"`
-	DepartmentName string             `json:"departmentname"`
-	Created        string             `json:"created"`
+	RoomNo         string             `json:"roomno,omitempty"`
+	DepartmentName string             `json:"departmentname,omitempty"`
+	Created        string             `json:"created,omitempty"`
 }

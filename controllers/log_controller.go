@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
 var logCollection = config.GetCollection("logs")
@@ -125,7 +126,8 @@ func checkedOut(c *gin.Context, logId primitive.ObjectID) {
 func GetAllLogs(c *gin.Context) {
 	var logs []models.EntryLogsResponse
 
-	result, err := logCollection.Find(context.TODO(), bson.M{})
+	opts := options.Find().SetProjection(bson.M{"user.contactno": 0, "user.rollno": 0, "room.created": 0})
+	result, err := logCollection.Find(context.TODO(), bson.M{}, opts)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})
@@ -138,14 +140,19 @@ func GetAllLogs(c *gin.Context) {
 		result.Decode(&singleLog)
 		logs = append(logs, singleLog)
 	}
-
-	c.JSON(http.StatusOK, gin.H{"success": true, "msg": "userLog count : " + strconv.Itoa(len(logs)), "data": logs})
+	if logs != nil {
+		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "userLog count : " + strconv.Itoa(len(logs)), "data": logs})
+	} else {
+		c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "not found"})
+		return
+	}
 }
 
 func GetCheckedInList(c *gin.Context) {
 	var logs []models.EntryLogsResponse
 
-	result, err := checkInCollection.Find(context.TODO(), bson.M{})
+	opts := options.Find().SetProjection(bson.M{"user.contactno": 0, "user.rollno": 0, "room.created": 0})
+	result, err := checkInCollection.Find(context.TODO(), bson.M{}, opts)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})
@@ -158,6 +165,11 @@ func GetCheckedInList(c *gin.Context) {
 		result.Decode(&singleLog)
 		logs = append(logs, singleLog)
 	}
-
-	c.JSON(http.StatusOK, gin.H{"success": true, "msg": "checked in count : " + strconv.Itoa(len(logs)), "data": logs})
+	if logs != nil {
+		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "checked in count : " + strconv.Itoa(len(logs)), "data": logs})
+		return
+	} else {
+		c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "not found"})
+		return
+	}
 }

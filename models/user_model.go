@@ -1,13 +1,15 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type User struct {
 	Id        primitive.ObjectID `json:"_id" bson:"_id"`
-	FullName  string             `json:"fullname"`
-	RollNo    string             `json:"rollno"`
-	Branch    string             `json:"branch"`
-	Course    string             `json:"course"`
-	Semester  int                `json:"semester"`
-	ContactNo string             `json:"contactno"`
+	FullName  string             `json:"fullname,omitempty"`
+	RollNo    string             `json:"rollno,omitempty"`
+	Branch    string             `json:"branch,omitempty"`
+	Course    string             `json:"course,omitempty"`
+	Semester  int                `json:"semester,omitempty"`
+	ContactNo string             `json:"contactno,omitempty"`
 }
