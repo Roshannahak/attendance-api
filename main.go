@@ -17,6 +17,11 @@ func main() {
 		auth := api.Group("/auth")
 		{
 			routers.AuthRouters(auth)
+
+			admin := auth.Group("/admin")
+			{
+				routers.AdminRouters(admin)
+			}
 		}
 		routers.UserRouters(api)
 

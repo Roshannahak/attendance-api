@@ -43,7 +43,7 @@ func UserRegistration(c *gin.Context) {
 	registeredUser, _ := userCollection.CountDocuments(context.TODO(), bson.M{"rollno": rollNo})
 	println(registeredUser)
 	if registeredUser > 0 {
-		c.JSON(http.StatusOK, gin.H{"success": false, "msg": "user already registered"})
+		c.JSON(http.StatusConflict, gin.H{"success": false, "msg": "user already registered"})
 		return
 	}
 
