@@ -38,10 +38,19 @@ func UserRegistration(c *gin.Context) {
 		return
 	}
 
+	rollNo := strings.ToLower(user.RollNo)
+
+	registeredUser, _ := userCollection.CountDocuments(context.TODO(), bson.M{"rollno": rollNo})
+	println(registeredUser)
+	if registeredUser > 0 {
+		c.JSON(http.StatusOK, gin.H{"success": false, "msg": "user already registered"})
+		return
+	}
+
 	newUser := models.User{
 		Id:        primitive.NewObjectID(),
 		FullName:  user.FullName,
-		RollNo:    strings.ToLower(user.RollNo),
+		RollNo:    rollNo,
 		Branch:    user.Branch,
 		Course:    user.Course,
 		Semester:  user.Semester,

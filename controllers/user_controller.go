@@ -36,8 +36,12 @@ func GetAllUser(c *gin.Context) {
 
 		users = append(users, singleUser)
 	}
+	if users != nil {
+		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "users count" + strconv.Itoa(len(users)), "data": users})
+		return
+	}
 
-	c.JSON(http.StatusOK, gin.H{"success": true, "msg": "users count" + strconv.Itoa(len(users)), "data": users})
+	c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "users not found.."})
 }
 
 func RemoveUser(c *gin.Context) {
@@ -85,7 +89,7 @@ func SearchUser(c *gin.Context) {
 		users = append(users, user)
 	}
 
-	if len(users) == 0{
+	if len(users) == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "user not found"})
 		return
 	}
