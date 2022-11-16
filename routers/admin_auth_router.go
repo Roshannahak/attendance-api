@@ -9,4 +9,5 @@ import (
 func AdminRouters(route *gin.RouterGroup){
 	route.GET("/admins", controllers.GetAdmins)
 	route.POST("/register", controllers.AdminRegistration)
+	route.POST("/login", controllers.AdminLogin)
 }

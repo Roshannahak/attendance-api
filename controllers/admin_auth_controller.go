@@ -48,6 +48,12 @@ func AdminRegistration(c *gin.Context) {
 		return
 	}
 
+	count, _ := AdminCollection.CountDocuments(context.TODO(), bson.M{"empid": admin.EmpId})
+	if count > 0 {
+		c.JSON(http.StatusConflict, gin.H{"success": false, "msg": "user already registered.."})
+		return
+	}
+
 	newAdmin := models.Admin{
 		Id:         primitive.NewObjectID(),
 		EmpId:      admin.EmpId,
@@ -63,4 +69,24 @@ func AdminRegistration(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"success": true, "msg": "successfully registered..", "data": newAdmin})
+}
+
+func AdminLogin(c *gin.Context) {
+	var cradentials models.AdminAuthRequest
+
+	bindErr := c.BindJSON(&cradentials)
+	if bindErr != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"success": false, "msg": "bed request.."})
+		return
+	}
+
+	var admin models.Admin
+	AdminCollection.FindOne(context.TODO(), bson.M{"empid": cradentials.EmpId, "contactno": cradentials.ContactNo}).Decode(&admin)
+
+	if admin.Id.IsZero() {
+		c.JSON(http.StatusUnauthorized, gin.H{"success": false, "msg": "invalid cradentials.."})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "msg": "successfully loggedin.."})
 }
