@@ -30,5 +30,5 @@ func main() {
 		routers.LogRouters(api)
 	}
 
-	router.Run("localhost:5252")
+	router.Run("antry.herokuapp.com")
 }
