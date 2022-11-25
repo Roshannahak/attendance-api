@@ -4,7 +4,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type User struct {
+type Student struct {
 	Id        primitive.ObjectID `json:"_id" bson:"_id"`
 	FullName  string             `json:"fullname,omitempty"`
 	RollNo    string             `json:"rollno,omitempty"`
@@ -12,4 +12,5 @@ type User struct {
 	Course    string             `json:"course,omitempty"`
 	Semester  int                `json:"semester,omitempty"`
 	ContactNo string             `json:"contactno,omitempty"`
+	UserType  string             `json:"usertype,omitempty"`
 }

@@ -14,20 +14,45 @@ func main() {
 
 	api := router.Group("/api")
 	{
+		//api/auth
 		auth := api.Group("/auth")
 		{
-			routers.AuthRouters(auth)
-
-			admin := auth.Group("/admin")
+			//api/auth/admin
+			adminAuth := auth.Group("/admin")
 			{
-				routers.AdminRouters(admin)
+				routers.AdminAuthRouters(adminAuth)
+			}
+
+			//api/auth/student
+			studentAuth := auth.Group("/student")
+			{
+				routers.StudentAuthRouters(studentAuth)
 			}
 		}
-		routers.UserRouters(api)
 
-		routers.RoomRouters(api)
+		//api/student
+		student := api.Group("/student")
+		{
+			routers.StudentRouters(student)
 
-		routers.LogRouters(api)
+			//api/student/log
+			logs := student.Group("/log")
+			{
+				routers.StudentLogRouters(logs)
+			}
+		}
+
+		//api/admin
+		admin := api.Group("/admin")
+		{
+			routers.AdminRouters(admin)
+		}
+
+		//api/room
+		room := api.Group("/room")
+		{
+			routers.RoomRouters(room)
+		}
 	}
 
 	router.Run()

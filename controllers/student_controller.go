@@ -13,12 +13,12 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-var userCollection = config.GetCollection("users")
+var studentCollection = config.Student
 
-func GetAllUser(c *gin.Context) {
-	var users []models.User
+func GetAllStudents(c *gin.Context) {
+	var students []models.Student
 
-	result, err := userCollection.Find(context.TODO(), bson.M{})
+	result, err := studentCollection.Find(context.TODO(), bson.M{})
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": "internal server error", "data": err})
@@ -26,7 +26,7 @@ func GetAllUser(c *gin.Context) {
 	}
 
 	for result.Next(context.TODO()) {
-		var singleUser models.User
+		var singleUser models.Student
 		err := result.Decode(&singleUser)
 
 		if err != nil {
@@ -34,28 +34,28 @@ func GetAllUser(c *gin.Context) {
 			return
 		}
 
-		users = append(users, singleUser)
+		students = append(students, singleUser)
 	}
-	if users != nil {
-		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "users count" + strconv.Itoa(len(users)), "data": users})
+	if students != nil {
+		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "students count" + strconv.Itoa(len(students)), "data": students})
 		return
 	}
 
-	c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "users not found.."})
+	c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "user not found.."})
 }
 
-func RemoveUser(c *gin.Context) {
-	userId := c.Param("userId")
+func RemoveStudent(c *gin.Context) {
+	studentId := c.Param("studentId")
 
-	objId, _ := primitive.ObjectIDFromHex(userId)
+	objId, _ := primitive.ObjectIDFromHex(studentId)
 
-	var user models.User
+	var user models.Student
 
-	deletedUser := userCollection.FindOne(context.TODO(), bson.M{"_id": objId})
+	deletedUser := studentCollection.FindOne(context.TODO(), bson.M{"_id": objId})
 
 	deletedUser.Decode(&user)
 
-	result, err := userCollection.DeleteOne(context.TODO(), bson.M{"_id": objId})
+	result, err := studentCollection.DeleteOne(context.TODO(), bson.M{"_id": objId})
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": "internal server error", "data": err})
@@ -70,29 +70,29 @@ func RemoveUser(c *gin.Context) {
 	c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "user not found.."})
 }
 
-func SearchUser(c *gin.Context) {
+func SearchStudent(c *gin.Context) {
 	quary := c.Param("quary")
 
 	model := mongo.IndexModel{Keys: bson.D{{Key: "branch", Value: "text"}, {Key: "fullname", Value: "text"}, {Key: "semester", Value: "text"}, {Key: "course", Value: "text"}}}
-	userCollection.Indexes().CreateOne(context.TODO(), model)
+	studentCollection.Indexes().CreateOne(context.TODO(), model)
 
-	result, err := userCollection.Find(context.TODO(), bson.M{"$text": bson.M{"$search": quary}})
+	result, err := studentCollection.Find(context.TODO(), bson.M{"$text": bson.M{"$search": quary}})
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})
 		return
 	}
-	var users []models.User
+	var students []models.Student
 
 	for result.Next(context.TODO()) {
-		var user models.User
+		var user models.Student
 		result.Decode(&user)
-		users = append(users, user)
+		students = append(students, user)
 	}
 
-	if len(users) == 0 {
+	if len(students) == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "user not found"})
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"success": true, "msg": "found..", "data": users})
+	c.JSON(http.StatusOK, gin.H{"success": true, "msg": "found..", "data": students})
 }

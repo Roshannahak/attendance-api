@@ -7,8 +7,8 @@ import (
 )
 
 func RoomRouters(route *gin.RouterGroup){
-	route.GET("/rooms", controllers.GetAllRooms)
-	route.POST("/room", controllers.CreateRoom)
-	route.DELETE("/room/:roomId", controllers.DeleteRoom)
-	route.PUT("/room/:roomId", controllers.UpdateRoom)
+	route.GET("/", controllers.GetAllRooms)
+	route.POST("/", controllers.CreateRoom)
+	route.DELETE("/:roomId", controllers.DeleteRoom)
+	route.PUT("/:roomId", controllers.UpdateRoom)
 }

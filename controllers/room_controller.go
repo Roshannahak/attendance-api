@@ -13,7 +13,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-var RoomCollection = config.GetCollection("Rooms")
+var RoomCollection = config.Room
 
 func CreateRoom(c *gin.Context) {
 	var room models.Room

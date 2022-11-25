@@ -4,15 +4,10 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-type EntryLogsResponse struct {
+type StudentLogs struct {
 	Id      primitive.ObjectID `json:"_id" bson:"_id"`
-	User    User               `json:"user"`
+	Student Student            `json:"student"`
 	Room    Room               `json:"room"`
 	InTime  string             `json:"intime"`
 	OutTime string             `json:"outtime"`
-}
-
-type EntryLogsRequest struct {
-	UserId string `json:"userid"`
-	RoomId string `json:"roomid"`
 }
