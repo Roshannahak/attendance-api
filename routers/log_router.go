@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//api/student/log
 func StudentLogRouters(route *gin.RouterGroup) {
 	route.POST("/entry", controllers.StudentEntry)
 	route.GET("/checkin", controllers.GetStudentCheckedInList)

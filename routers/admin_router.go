@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//api/admin
 func AdminRouters(route *gin.RouterGroup){
 	route.GET("/", controllers.GetAdmins)
 }

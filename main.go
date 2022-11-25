@@ -55,5 +55,5 @@ func main() {
 		}
 	}
 
-	router.Run()
+	router.Run("localhost:5252")
 }

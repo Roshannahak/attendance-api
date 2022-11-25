@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+//api/student
 func StudentRouters(route *gin.RouterGroup) {
 	route.DELETE("/:studentId", controllers.RemoveStudent)
 	route.GET("/", controllers.GetAllStudents)
