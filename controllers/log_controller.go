@@ -94,7 +94,7 @@ func isTimeOut(inTimeStr string) bool {
 	currentTime := time.Now()
 	diff := currentTime.Sub(InTime)
 	timeDiff := int(diff.Hours())
-	if timeDiff > 11 {
+	if timeDiff > 7 {
 		return true
 	}
 	return false
