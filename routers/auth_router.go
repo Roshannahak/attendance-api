@@ -17,3 +17,8 @@ func AdminAuthRouters(route *gin.RouterGroup){
 	route.POST("/register", controllers.AdminRegistration)
 	route.POST("/login", controllers.AdminLogin)
 }
+
+//api/auth/visitor
+func VisitorAuthRouters(route *gin.RouterGroup){
+	route.POST("/login", controllers.VisitorLogin)
+}

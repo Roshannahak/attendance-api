@@ -15,7 +15,7 @@ import (
 var studentCollection = config.Student
 
 func StudentLogin(c *gin.Context) {
-	var auth models.Auth
+	var auth models.StudentAuthRequest
 
 	if err := c.BindJSON(&auth); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"success": false, "msg": err})

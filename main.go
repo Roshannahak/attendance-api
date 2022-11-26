@@ -28,6 +28,12 @@ func main() {
 			{
 				routers.StudentAuthRouters(studentAuth)
 			}
+
+			//api/auth/visitor
+			visitorAuth := auth.Group("/visitor")
+			{
+				routers.VisitorAuthRouters(visitorAuth)
+			}
 		}
 
 		//api/visitor
