@@ -15,10 +15,11 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var studentLogCollection = config.StudentLog
-var studentCheckInCollection = config.StudentCheckIn
+var visitorLogCollection = config.VisitorLog
+var visitorCheckInCollection = config.VisitorCheckIn
+var visitorCollection = config.Visitor
 
-func StudentEntry(c *gin.Context) {
+func VisitorEntry(c *gin.Context) {
 	var entryRequest models.EntryLogsRequest
 
 	if err := c.BindJSON(&entryRequest); err != nil {
@@ -36,31 +37,31 @@ func StudentEntry(c *gin.Context) {
 	RoomCollection.FindOne(context.TODO(), bson.M{"_id": roomId}).Decode(&room)
 
 	//find user object
-	studentId, err := primitive.ObjectIDFromHex(entryRequest.UserId)
+	visitorId, err := primitive.ObjectIDFromHex(entryRequest.UserId)
 	if err != nil {
 		c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "invalid user id"})
 		return
 	}
-	var user models.Student
-	studentCollection.FindOne(context.TODO(), bson.M{"_id": studentId}).Decode(&user)
+	var user models.Visitor
+	visitorCheckInCollection.FindOne(context.TODO(), bson.M{"_id": visitorId}).Decode(&user)
 
 	if room.Id == roomId {
 		//check log available in checked in list
-		checkedInUser := studentCheckInCollection.FindOne(context.TODO(), bson.M{"student._id": studentId, "room._id": roomId})
-		var entryResponse models.StudentLogs
+		checkedInUser := visitorCheckInCollection.FindOne(context.TODO(), bson.M{"visitor._id": visitorId, "room._id": roomId})
+		var entryResponse models.VisitorLogs
 		checkedInUser.Decode(&entryResponse)
 		if entryResponse.Id.IsZero() {
 
-			studentCheckedIn(c, room, user)
+			visitorCheckedIn(c, room, user)
 
 		} else {
 			//check time out
 			if middleware.IsTimeOut(entryResponse.InTime) {
-				studentCheckInCollection.DeleteOne(context.TODO(), bson.M{"_id": entryResponse.Id})
-				studentCheckedIn(c, room, user)
+				visitorCheckInCollection.DeleteOne(context.TODO(), bson.M{"_id": entryResponse.Id})
+				visitorCheckedIn(c, room, user)
 			} else {
 				//if log available in checked in list
-				studentCheckedOut(c, entryResponse.Id)
+				visitorCheckedOut(c, entryResponse.Id)
 			}
 		}
 	} else {
@@ -69,30 +70,30 @@ func StudentEntry(c *gin.Context) {
 	}
 }
 
-func studentCheckedIn(c *gin.Context, room models.Room, user models.Student) {
-	newstudentlog := models.StudentLogs{
+func visitorCheckedIn(c *gin.Context, room models.Room, user models.Visitor) {
+	newVisitorlog := models.VisitorLogs{
 		Id:      primitive.NewObjectID(),
-		Student: user,
+		Visitor: user,
 		Room:    room,
 		InTime:  time.Now().Format(time.RFC3339),
 	}
 
 	//insert data in logs
-	if result, _ := studentLogCollection.InsertOne(context.TODO(), newstudentlog); result.InsertedID != nil {
+	if result, _ := visitorLogCollection.InsertOne(context.TODO(), newVisitorlog); result.InsertedID != nil {
 		//insert data in checkin list
-		_, err := studentCheckInCollection.InsertOne(context.TODO(), newstudentlog)
+		_, err := visitorCheckInCollection.InsertOne(context.TODO(), newVisitorlog)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})
 			return
 		}
-		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "welcome you have successfully studentCheckedIn"})
+		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "welcome you have successfully visitorCheckedIn"})
 		return
 	}
 }
 
-func studentCheckedOut(c *gin.Context, logId primitive.ObjectID) {
+func visitorCheckedOut(c *gin.Context, logId primitive.ObjectID) {
 
-	_, errOnDelete := studentCheckInCollection.DeleteOne(context.TODO(), bson.M{"_id": logId})
+	_, errOnDelete := visitorCheckInCollection.DeleteOne(context.TODO(), bson.M{"_id": logId})
 	if errOnDelete != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": errOnDelete})
 		return
@@ -100,7 +101,7 @@ func studentCheckedOut(c *gin.Context, logId primitive.ObjectID) {
 
 	updateLog := bson.M{"outtime": time.Now().Format(time.RFC3339)}
 
-	result, errOnUpdate := studentLogCollection.UpdateOne(context.TODO(), bson.M{"_id": logId}, bson.M{"$set": updateLog})
+	result, errOnUpdate := visitorLogCollection.UpdateOne(context.TODO(), bson.M{"_id": logId}, bson.M{"$set": updateLog})
 	if errOnUpdate != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": errOnUpdate})
 		return
@@ -113,11 +114,11 @@ func studentCheckedOut(c *gin.Context, logId primitive.ObjectID) {
 	c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "user not found.."})
 }
 
-func GetAllStudentLogs(c *gin.Context) {
-	var logs []models.StudentLogs
+func GetAllVisitorLogs(c *gin.Context) {
+	var logs []models.VisitorLogs
 
-	opts := options.Find().SetProjection(bson.M{"student.contactno": 0, "student.rollno": 0, "room.created": 0})
-	result, err := studentLogCollection.Find(context.TODO(), bson.M{}, opts)
+	opts := options.Find().SetProjection(bson.M{"user.contactno": 0, "user.rollno": 0, "room.created": 0})
+	result, err := visitorLogCollection.Find(context.TODO(), bson.M{}, opts)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})
@@ -125,24 +126,24 @@ func GetAllStudentLogs(c *gin.Context) {
 	}
 
 	for result.Next(context.TODO()) {
-		var singleLog models.StudentLogs
+		var singleLog models.VisitorLogs
 
 		result.Decode(&singleLog)
 		logs = append(logs, singleLog)
 	}
 	if logs != nil {
-		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "studentLog count : " + strconv.Itoa(len(logs)), "data": logs})
+		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "userLog count : " + strconv.Itoa(len(logs)), "data": logs})
 	} else {
 		c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "not found"})
 		return
 	}
 }
 
-func GetStudentCheckedInList(c *gin.Context) {
-	var logs []models.StudentLogs
+func GetVisitorCheckedInList(c *gin.Context) {
+	var logs []models.VisitorLogs
 
-	opts := options.Find().SetProjection(bson.M{"student.contactno": 0, "student.rollno": 0, "room.created": 0})
-	result, err := studentCheckInCollection.Find(context.TODO(), bson.M{}, opts)
+	opts := options.Find().SetProjection(bson.M{"visitor.contactno": 0, "visitor.rollno": 0, "room.created": 0})
+	result, err := visitorCheckInCollection.Find(context.TODO(), bson.M{}, opts)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})
@@ -150,7 +151,7 @@ func GetStudentCheckedInList(c *gin.Context) {
 	}
 
 	for result.Next(context.TODO()) {
-		var singleLog models.StudentLogs
+		var singleLog models.VisitorLogs
 
 		result.Decode(&singleLog)
 		logs = append(logs, singleLog)
@@ -164,15 +165,15 @@ func GetStudentCheckedInList(c *gin.Context) {
 	}
 }
 
-func GetLogsByStudentId(c *gin.Context) {
-	studentId := c.Param("studentId")
+func GetLogsByVisitorId(c *gin.Context) {
+	visitorId := c.Param("visitorId")
 
-	var logs []models.StudentLogs
+	var logs []models.VisitorLogs
 
-	id, _ := primitive.ObjectIDFromHex(studentId)
+	id, _ := primitive.ObjectIDFromHex(visitorId)
 
-	opts := options.Find().SetProjection(bson.M{"student.contactno": 0, "student.rollno": 0, "room.created": 0})
-	result, err := studentLogCollection.Find(context.TODO(), bson.M{"student._id": id}, opts)
+	opts := options.Find().SetProjection(bson.M{"visitor.contactno": 0, "visitor.rollno": 0, "room.created": 0})
+	result, err := visitorLogCollection.Find(context.TODO(), bson.M{"visitor._id": id}, opts)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})
@@ -180,7 +181,7 @@ func GetLogsByStudentId(c *gin.Context) {
 	}
 
 	for result.Next(context.TODO()) {
-		var singleLog models.StudentLogs
+		var singleLog models.VisitorLogs
 		result.Decode(&singleLog)
 		logs = append(logs, singleLog)
 	}
