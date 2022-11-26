@@ -13,3 +13,11 @@ func StudentLogRouters(route *gin.RouterGroup) {
 	route.GET("/", controllers.GetAllStudentLogs)
 	route.GET("/:studentId", controllers.GetLogsByStudentId)
 }
+
+//api/visitor/log
+func VisitorLogRouters(route *gin.RouterGroup){
+	route.POST("/entry", controllers.VisitorEntry)
+	route.GET("/checkin", controllers.GetVisitorCheckedInList)
+	route.GET("/", controllers.GetAllStudentLogs)
+	route.GET("/:visitorId", controllers.GetLogsByVisitorId)
+}

@@ -34,6 +34,12 @@ func main() {
 		visitor := api.Group("/visitor")
 		{
 			routers.VisitorRouters(visitor)
+
+			//api/visitor/log
+			logs := visitor.Group("/log")
+			{
+				routers.VisitorLogRouters(logs)
+			}
 		}
 
 		//api/student
