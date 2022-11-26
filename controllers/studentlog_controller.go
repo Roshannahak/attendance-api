@@ -51,13 +51,13 @@ func StudentEntry(c *gin.Context) {
 		checkedInUser.Decode(&entryResponse)
 		if entryResponse.Id.IsZero() {
 
-			studentCheckedIn(c, room, user)
+			studentCheckedIn(c, room, user, entryRequest.Reason)
 
 		} else {
 			//check time out
 			if middleware.IsTimeOut(entryResponse.InTime) {
 				studentCheckInCollection.DeleteOne(context.TODO(), bson.M{"_id": entryResponse.Id})
-				studentCheckedIn(c, room, user)
+				studentCheckedIn(c, room, user, entryRequest.Reason)
 			} else {
 				//if log available in checked in list
 				studentCheckedOut(c, entryResponse.Id)
@@ -69,12 +69,13 @@ func StudentEntry(c *gin.Context) {
 	}
 }
 
-func studentCheckedIn(c *gin.Context, room models.Room, user models.Student) {
+func studentCheckedIn(c *gin.Context, room models.Room, user models.Student, reason string) {
 	newstudentlog := models.StudentLogs{
 		Id:      primitive.NewObjectID(),
 		Student: user,
 		Room:    room,
 		InTime:  time.Now().Format(time.RFC3339),
+		Reason:  reason,
 	}
 
 	//insert data in logs

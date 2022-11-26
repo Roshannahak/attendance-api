@@ -52,13 +52,13 @@ func VisitorEntry(c *gin.Context) {
 		checkedInUser.Decode(&entryResponse)
 		if entryResponse.Id.IsZero() {
 
-			visitorCheckedIn(c, room, user)
+			visitorCheckedIn(c, room, user, entryRequest.Reason)
 
 		} else {
 			//check time out
 			if middleware.IsTimeOut(entryResponse.InTime) {
 				visitorCheckInCollection.DeleteOne(context.TODO(), bson.M{"_id": entryResponse.Id})
-				visitorCheckedIn(c, room, user)
+				visitorCheckedIn(c, room, user, entryRequest.Reason)
 			} else {
 				//if log available in checked in list
 				visitorCheckedOut(c, entryResponse.Id)
@@ -70,12 +70,13 @@ func VisitorEntry(c *gin.Context) {
 	}
 }
 
-func visitorCheckedIn(c *gin.Context, room models.Room, user models.Visitor) {
+func visitorCheckedIn(c *gin.Context, room models.Room, user models.Visitor, reason string) {
 	newVisitorlog := models.VisitorLogs{
 		Id:      primitive.NewObjectID(),
 		Visitor: user,
 		Room:    room,
 		InTime:  time.Now().Format(time.RFC3339),
+		Reason:  reason,
 	}
 
 	//insert data in logs

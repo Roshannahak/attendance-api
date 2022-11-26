@@ -8,4 +8,5 @@ type VisitorLogs struct {
 	Room    Room               `json:"room"`
 	InTime  string             `json:"intime"`
 	OutTime string             `json:"outtime"`
+	Reason  string             `json:"reason"`
 }
