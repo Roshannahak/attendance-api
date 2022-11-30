@@ -18,6 +18,6 @@ func StudentLogRouters(route *gin.RouterGroup) {
 func VisitorLogRouters(route *gin.RouterGroup){
 	route.POST("/entry", controllers.VisitorEntry)
 	route.GET("/checkin", controllers.GetVisitorCheckedInList)
-	route.GET("/", controllers.GetAllStudentLogs)
+	route.GET("/", controllers.GetAllVisitorLogs)
 	route.GET("/:visitorId", controllers.GetLogsByVisitorId)
 }

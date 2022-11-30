@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 var visitorCollaction = config.Visitor
@@ -20,6 +21,7 @@ func VisitorLogin(c *gin.Context) {
 	}
 
 	newVisitor := models.Visitor{
+		Id: primitive.NewObjectID(),
 		FullName:  visitor.FullName,
 		City:      visitor.City,
 		ContactNo: visitor.ContactNo,

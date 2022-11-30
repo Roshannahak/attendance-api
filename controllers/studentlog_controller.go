@@ -117,7 +117,7 @@ func studentCheckedOut(c *gin.Context, logId primitive.ObjectID) {
 func GetAllStudentLogs(c *gin.Context) {
 	var logs []models.StudentLogs
 
-	opts := options.Find().SetProjection(bson.M{"student.contactno": 0, "student.rollno": 0, "room.created": 0})
+	opts := options.Find().SetProjection(bson.M{"student.contactno": 0, "student.rollno": 0, "student.usertype": 0, "room.created": 0})
 	result, err := studentLogCollection.Find(context.TODO(), bson.M{}, opts)
 
 	if err != nil {
@@ -142,7 +142,7 @@ func GetAllStudentLogs(c *gin.Context) {
 func GetStudentCheckedInList(c *gin.Context) {
 	var logs []models.StudentLogs
 
-	opts := options.Find().SetProjection(bson.M{"student.contactno": 0, "student.rollno": 0, "room.created": 0})
+	opts := options.Find().SetProjection(bson.M{"student.contactno": 0, "student.rollno": 0, "student.usertype": 0, "room.created": 0})
 	result, err := studentCheckInCollection.Find(context.TODO(), bson.M{}, opts)
 
 	if err != nil {
@@ -172,7 +172,7 @@ func GetLogsByStudentId(c *gin.Context) {
 
 	id, _ := primitive.ObjectIDFromHex(studentId)
 
-	opts := options.Find().SetProjection(bson.M{"student.contactno": 0, "student.rollno": 0, "room.created": 0})
+	opts := options.Find().SetProjection(bson.M{"student.contactno": 0, "student.rollno": 0, "student.usertype": 0, "room.created": 0})
 	result, err := studentLogCollection.Find(context.TODO(), bson.M{"student._id": id}, opts)
 
 	if err != nil {

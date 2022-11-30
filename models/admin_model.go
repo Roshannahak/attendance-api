@@ -8,5 +8,5 @@ type Admin struct {
 	FullName   string             `json:"fullname,omitempty"`
 	Department string             `json:"department,omitempty"`
 	ContactNo  string             `json:"contactno,omitempty"`
-	SuperAdmin bool               `json:"superadmin,omitempty"`
+	SuperAdmin bool               `json:"superadmin"`
 }

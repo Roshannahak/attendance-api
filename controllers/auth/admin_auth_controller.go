@@ -34,7 +34,7 @@ func AdminRegistration(c *gin.Context) {
 		FullName:   admin.FullName,
 		Department: admin.Department,
 		ContactNo:  admin.ContactNo,
-		SuperAdmin: false,
+		SuperAdmin: admin.SuperAdmin,
 	}
 
 	_, err := AdminCollection.InsertOne(context.TODO(), newAdmin)
@@ -63,5 +63,5 @@ func AdminLogin(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"success": true, "msg": "successfully loggedin.."})
+	c.JSON(http.StatusOK, gin.H{"success": true, "msg": "successfully loggedin..", "data": admin})
 }

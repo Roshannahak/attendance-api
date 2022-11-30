@@ -41,7 +41,7 @@ func GetAllStudents(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "user not found.."})
+	c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "users not found.."})
 }
 
 func RemoveStudent(c *gin.Context) {

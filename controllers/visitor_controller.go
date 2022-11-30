@@ -25,8 +25,7 @@ func GetAllVisitors(c *gin.Context) {
 		return
 	}
 
-	result.Next(context.TODO())
-	{
+	for result.Next(context.TODO()) {
 		var singleObject models.Visitor
 		err := result.Decode(&singleObject)
 

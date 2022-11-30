@@ -43,7 +43,7 @@ func VisitorEntry(c *gin.Context) {
 		return
 	}
 	var user models.Visitor
-	visitorCheckInCollection.FindOne(context.TODO(), bson.M{"_id": visitorId}).Decode(&user)
+	visitorCollection.FindOne(context.TODO(), bson.M{"_id": visitorId}).Decode(&user)
 
 	if room.Id == roomId {
 		//check log available in checked in list
@@ -118,7 +118,7 @@ func visitorCheckedOut(c *gin.Context, logId primitive.ObjectID) {
 func GetAllVisitorLogs(c *gin.Context) {
 	var logs []models.VisitorLogs
 
-	opts := options.Find().SetProjection(bson.M{"user.contactno": 0, "user.rollno": 0, "room.created": 0})
+	opts := options.Find().SetProjection(bson.M{"visitor.contactno": 0, "visitor.rollno": 0, "visitor.usertype": 0, "room.created": 0})
 	result, err := visitorLogCollection.Find(context.TODO(), bson.M{}, opts)
 
 	if err != nil {
@@ -143,7 +143,7 @@ func GetAllVisitorLogs(c *gin.Context) {
 func GetVisitorCheckedInList(c *gin.Context) {
 	var logs []models.VisitorLogs
 
-	opts := options.Find().SetProjection(bson.M{"visitor.contactno": 0, "visitor.rollno": 0, "room.created": 0})
+	opts := options.Find().SetProjection(bson.M{"visitor.contactno": 0, "visitor.rollno": 0, "visitor.usertype": 0, "room.created": 0})
 	result, err := visitorCheckInCollection.Find(context.TODO(), bson.M{}, opts)
 
 	if err != nil {
@@ -173,7 +173,7 @@ func GetLogsByVisitorId(c *gin.Context) {
 
 	id, _ := primitive.ObjectIDFromHex(visitorId)
 
-	opts := options.Find().SetProjection(bson.M{"visitor.contactno": 0, "visitor.rollno": 0, "room.created": 0})
+	opts := options.Find().SetProjection(bson.M{"visitor.contactno": 0, "visitor.rollno": 0, "visitor.usertype": 0, "room.created": 0})
 	result, err := visitorLogCollection.Find(context.TODO(), bson.M{"visitor._id": id}, opts)
 
 	if err != nil {

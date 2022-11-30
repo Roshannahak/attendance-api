@@ -25,6 +25,7 @@ func CreateRoom(c *gin.Context) {
 	newRoom := models.Room{
 		Id:             primitive.NewObjectID(),
 		RoomNo:         room.RoomNo,
+		RoomName:       room.RoomName,
 		DepartmentName: room.DepartmentName,
 		Created:        time.Now().Format("2006-01-02"),
 	}
@@ -106,7 +107,7 @@ func UpdateRoom(c *gin.Context) {
 		return
 	}
 
-	if updateResult.ModifiedCount == 1{
+	if updateResult.ModifiedCount == 1 {
 		RoomCollection.FindOne(context.TODO(), bson.M{"_id": objId}).Decode(&room)
 		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "successfully updated..", "data": room})
 		return
