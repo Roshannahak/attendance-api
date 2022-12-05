@@ -3,7 +3,9 @@ package config
 import (
 	"context"
 	"log"
+	"os"
 
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
@@ -29,5 +31,13 @@ func GetCollection(collectionName string) *mongo.Collection {
 	collection := ConnectDB().Database("Attendance").Collection(collectionName)
 
 	return collection;
+}
+
+func DotEnvVar(key string) string {
+	err := godotenv.Load(".env")
+	if err != nil{
+		log.Fatal("Error loading .env file")
+	}
+	return os.Getenv(key)
 }
 
