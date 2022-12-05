@@ -73,5 +73,5 @@ func main() {
 		}
 	}
 
-	router.Run()
+	router.Run(config.DotEnvVar("IP"))
 }
