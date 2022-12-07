@@ -194,3 +194,19 @@ func GetLogsByVisitorId(c *gin.Context) {
 
 	c.JSON(http.StatusNotFound, gin.H{"success": false, "msg": "not found"})
 }
+
+func GetVisitorLogByLogId(c *gin.Context) {
+	logId := c.Param("logId")
+
+	id, _ := primitive.ObjectIDFromHex(logId)
+
+	var log models.VisitorLogs
+
+	result := visitorLogCollection.FindOne(context.TODO(), bson.M{"_id": id})
+	result.Decode(&log)
+	if log.Id.IsZero() {
+		c.JSON(http.StatusNotFound, gin.H{"success": true, "msg": "data not found"})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "msg": "successfully found.", "data": log})
+}
