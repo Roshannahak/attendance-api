@@ -14,6 +14,9 @@ func main() {
 
 	api := router.Group("/api")
 	{
+		//api/stats
+		routers.DashboardRouters(api)
+
 		//api/auth
 		auth := api.Group("/auth")
 		{
