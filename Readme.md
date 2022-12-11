@@ -1,9 +1,9 @@
 ## ANTRY-API
 Project **Antry** for *Visitor*, *employee*, *student* entry log managament system.
 
-### API Documentation :-
+## API Documentation :-
 
-##### BASE URL : https://(current ip):5252/api
+### BASE URL : https://(current ip):5252/api
 
 Method | Routes    | Description | Request Body
 ------ | --------- | ----------  | -----------
