@@ -76,5 +76,5 @@ func main() {
 		}
 	}
 
-	router.Run()
+	router.Run(config.GetCurrentIp()+":5252")
 }
