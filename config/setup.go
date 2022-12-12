@@ -10,10 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const driver = "mongodb+srv://roshannahak:112233Raja@cluster0.sq55i.mongodb.net/?retryWrites=true&w=majority"
-
-func ConnectDB() *mongo.Client{
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(driver))
+func ConnectDB() *mongo.Client {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(DotEnvVar("DRIVER_PATH")))
 
 	if err != nil {
 		log.Fatal("database connection failed : ", err)
@@ -21,7 +19,7 @@ func ConnectDB() *mongo.Client{
 
 	println("database successfully connected...")
 
-	return client;
+	return client
 }
 
 // //get db instance
@@ -30,14 +28,13 @@ func ConnectDB() *mongo.Client{
 func GetCollection(collectionName string) *mongo.Collection {
 	collection := ConnectDB().Database("Attendance").Collection(collectionName)
 
-	return collection;
+	return collection
 }
 
 func DotEnvVar(key string) string {
 	err := godotenv.Load(".env")
-	if err != nil{
+	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
 	return os.Getenv(key)
 }
-
