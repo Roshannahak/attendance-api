@@ -1,5 +1,10 @@
-## ANTRY-API
+# ANTRY-API
 Project **Antry** for *Visitor*, *employee*, *student* entry log managament system.
+
+## Server build file
+Linux | [download](https://github.com/Roshannahak/attendance-api/blob/main/main)
+--- | ---
+**Windows** | [download](https://github.com/Roshannahak/attendance-api/blob/main/main.exe)
 
 ## API Documentation :-
 
