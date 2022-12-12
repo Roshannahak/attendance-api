@@ -10,8 +10,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+var driver = DotEnvVar("DRIVER_PATH")
+
 func ConnectDB() *mongo.Client {
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(DotEnvVar("DRIVER_PATH")))
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(driver))
 
 	if err != nil {
 		log.Fatal("database connection failed : ", err)
