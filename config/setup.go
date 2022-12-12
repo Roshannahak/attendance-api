@@ -11,7 +11,7 @@ import (
 )
 
 func ConnectDB() *mongo.Client {
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(DotEnvVar("DRIVER_PATH")))
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb+srv://roshannahak:112233Raja@cluster0.sq55i.mongodb.net/?retryWrites=true&w=majority"))
 
 	if err != nil {
 		log.Fatal("database connection failed : ", err)
