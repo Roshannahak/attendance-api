@@ -10,10 +10,8 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-const driver = "mongodb+srv://roshannahak:112233Raja@cluster0.sq55i.mongodb.net/?retryWrites=true&w=majority"
-
 func ConnectDB() *mongo.Client {
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(driver))
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(DotEnvVar("DRIVER_PATH")))
 
 	if err != nil {
 		log.Fatal("database connection failed : ", err)
