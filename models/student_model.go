@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/golang-jwt/jwt/v4"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -13,4 +14,5 @@ type Student struct {
 	Semester  int                `json:"semester,omitempty"`
 	ContactNo string             `json:"contactno,omitempty"`
 	UserType  string             `json:"usertype,omitempty"`
+	jwt.StandardClaims
 }

@@ -1,6 +1,9 @@
 package models
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
+import (
+	"github.com/golang-jwt/jwt/v4"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Admin struct {
 	Id         primitive.ObjectID `json:"_id,omitempty" bson:"_id"`
@@ -9,4 +12,5 @@ type Admin struct {
 	Department string             `json:"department,omitempty"`
 	ContactNo  string             `json:"contactno,omitempty"`
 	SuperAdmin bool               `json:"superadmin"`
+	jwt.StandardClaims
 }

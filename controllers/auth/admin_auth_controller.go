@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"attendance_api/config"
+	"attendance_api/middleware"
 	"attendance_api/models"
 	"context"
 	"net/http"
@@ -63,5 +64,23 @@ func AdminLogin(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"success": true, "msg": "successfully loggedin..", "data": admin})
+	//genrate token
+	token, err := middleware.GenrateAdminToken(&admin)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})
+		return
+	}
+	c.JSON(http.StatusOK, gin.H{"success": true, "msg": "successfully loggedin..", "token": token})
+}
+
+func DecryptAdminToken(c *gin.Context) {
+	tokenString := c.Request.Header.Get("x-auth-admin")
+
+	valid, claims := middleware.VerifyAdminToken(tokenString)
+
+	if valid {
+		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "decoded data", "data": claims})
+		return
+	}
+	c.JSON(http.StatusUnauthorized, gin.H{"success": false, "msg": "unauthorized token"})
 }

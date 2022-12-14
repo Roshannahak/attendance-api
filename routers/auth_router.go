@@ -10,12 +10,14 @@ import (
 func StudentAuthRouters(route *gin.RouterGroup) {
 	route.POST("/register", controllers.StudentRegistration)
 	route.POST("/login", controllers.StudentLogin)
+	route.GET("/decode", controllers.DecryptStudentToken)
 }
 
 //api/auth/admin
 func AdminAuthRouters(route *gin.RouterGroup){
 	route.POST("/register", controllers.AdminRegistration)
 	route.POST("/login", controllers.AdminLogin)
+	route.GET("/decode", controllers.DecryptAdminToken)
 }
 
 //api/auth/visitor

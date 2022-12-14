@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"attendance_api/config"
+	"attendance_api/middleware"
 	"attendance_api/models"
 	"context"
 	"net/http"
@@ -29,7 +30,15 @@ func StudentLogin(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{"success": true, "msg": "loggedin successfully..", "data": student})
+	//genrate token
+	token, err := middleware.GenrateStudentToken(&student)
+
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"success": false, "msg": err})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"success": true, "msg": "loggedin successfully..", "token": token})
 
 }
 
@@ -58,7 +67,7 @@ func StudentRegistration(c *gin.Context) {
 		Course:    student.Course,
 		Semester:  student.Semester,
 		ContactNo: student.ContactNo,
-		UserType: "STUDENT",
+		UserType:  "STUDENT",
 	}
 
 	_, err := studentCollection.InsertOne(context.TODO(), newStudent)
@@ -69,4 +78,16 @@ func StudentRegistration(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusCreated, gin.H{"success": true, "msg": "successfully registered..", "data": newStudent})
+}
+
+func DecryptStudentToken(c *gin.Context){
+	tokenString := c.Request.Header.Get("x-auth-student")
+
+	valid, claims := middleware.VerifyStudentToken(tokenString)
+
+	if valid{
+		c.JSON(http.StatusOK, gin.H{"success": true, "msg": "decoded data", "data": claims})
+		return
+	}
+	c.JSON(http.StatusUnauthorized, gin.H{"success": false, "msg": "unauthorized token"})
 }
