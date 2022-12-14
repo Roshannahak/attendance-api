@@ -15,8 +15,10 @@ Method | Routes    | Description | Request Body
 GET    | /stats    | get dashboard stats |
 POST   | /auth/admin/register | admin registration |
 POST   | /auth/admin/login | admin login |
+GET   | /auth/admin/decode | decrypt admin token | Header({"x-auth-admin": token})
 POST   | /auth/student/register | student registration |
 POST   | /auth/student/login | student login |
+GET   | /auth/student/decode | decrypt student token | Header({"x-auth-student": token})
 POST   | /auth/visitor | visitor login |
 GET   | /visitor | get all visitor list |
 DELETE   | /visitor/:visitorId | delete visitor by id |
