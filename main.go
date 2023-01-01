@@ -3,7 +3,6 @@ package main
 import (
 	"attendance_api/config"
 	"attendance_api/routers"
-	"fmt"
 
 	"github.com/gin-gonic/gin"
 )
@@ -77,9 +76,9 @@ func main() {
 		}
 	}
 
-	var ip = "localhost";
-	fmt.Println("Enter your IP Address :")
-	fmt.Scanln(&ip)
+	// var ip = "localhost";
+	// fmt.Println("Enter your IP Address :")
+	// fmt.Scanln(&ip)
 
-	router.Run(ip+":5252")
+	router.Run("0.0.0.0:5252")
 }
