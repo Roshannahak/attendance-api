@@ -1,6 +1,12 @@
 # ANTRY-API
 Project **Antry** for *Visitor*, *employee*, *student* entry log managament system.
 
+## Pull Docker Image
+first you have to ensure that install docker on your system after that go to the terminal and write down code. API server port `:5252`
+```
+docker pull roshannahak/antry_api_server
+```
+
 ## Server build file
 Linux | [download](https://github.com/Roshannahak/attendance-api/blob/main/main)
 --- | ---
